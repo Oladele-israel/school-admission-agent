@@ -13,7 +13,7 @@ export default async function EscalationsPage() {
     include: { applicant: true },
   });
 
-  const items = escalations.map((e) => ({
+  const items = escalations.map((e: any) => ({
     id: e.id,
     applicantId: e.applicantId,
     parentName: e.applicant.parentName || "Unnamed parent",

@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export default async function KnowledgeBasePage() {
   const articles = await prisma.knowledgeBaseArticle.findMany({ orderBy: { category: "asc" } });
-  const items = articles.map((a) => ({ ...a, updatedAt: a.updatedAt.toISOString() }));
+  const items = articles.map((a: any) => ({ ...a, updatedAt: a.updatedAt.toISOString() }));
 
   return (
     <div className="h-full flex flex-col">

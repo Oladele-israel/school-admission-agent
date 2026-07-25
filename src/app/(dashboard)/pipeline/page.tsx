@@ -11,11 +11,11 @@ export default async function PipelinePage() {
     select: { id: true, parentName: true, childName: true, stage: true, updatedAt: true },
   });
 
-  const columns = STAGES.map((stage) => ({
+  const columns = STAGES.map((stage: any) => ({
     stage,
     applicants: applicants
-      .filter((a) => a.stage === stage)
-      .map((a) => ({ ...a, updatedAt: a.updatedAt.toISOString() })),
+      .filter((a: any) => a.stage === stage)
+      .map((a: any) => ({ ...a, updatedAt: a.updatedAt.toISOString() })),
   }));
 
   return (

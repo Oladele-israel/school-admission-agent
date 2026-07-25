@@ -16,7 +16,7 @@ export default async function InboxPage() {
     take: 100,
   });
 
-  const listItems = applicants.map((a) => ({
+  const listItems = applicants.map((a: any) => ({
     id: a.id,
     parentName: a.parentName || "Unnamed parent",
     childName: a.childName,
