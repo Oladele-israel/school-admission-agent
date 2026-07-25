@@ -16,8 +16,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "applicantId, reason, and assignedRole are required" }, { status: 400 });
   }
 
+  // Format reason to match Prisma enum (e.g. "Fee Negotiation" -> "FEE_NEGOTIATION")
+  const formattedReason = reason.toUpperCase().replace(/\s+/g, "_");
+
   const escalation = await prisma.escalationTask.create({
-    data: { applicantId, reason, triggerSnippet: triggerSnippet || "", assignedRole, suggestedReply: suggestedReply || null },
+    data: { applicantId, reason: formattedReason, triggerSnippet: triggerSnippet || "", assignedRole, suggestedReply: suggestedReply || null },
   });
 
   await prisma.applicant.update({ where: { id: applicantId }, data: { agentPaused: true } });
