@@ -1,26 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-paper: #0b0f19;
+  --color-ink: #f8fafc;
+  --color-brass: #8b5cf6; /* Vibrant violet */
+  --color-line: #334155;
+  --color-rust: #ef4444;
+  --font-display: 'Inter', sans-serif;
+  --font-sans: 'Inter', sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply text-ink antialiased bg-paper;
+    font-family: 'Inter', sans-serif;
+    /* Subtle background gradient */
+    background: radial-gradient(circle at top right, #1e1b4b, #0b0f19 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  ::selection {
+    @apply bg-brass/30 text-white;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .ledger-card {
+    @apply rounded-2xl transition-all duration-300;
+    background: rgba(30, 41, 59, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  }
+  .ledger-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 40px rgba(139, 92, 246, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    @apply px-6 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-300 flex items-center justify-center;
+    background: linear-gradient(135deg, var(--color-brass) 0%, #6d28d9 100%);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
+  }
+  .btn-primary:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .btn-secondary {
+    @apply px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center justify-center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-ink);
+  }
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .input-field {
+    @apply w-full rounded-xl px-4 py-3 text-sm transition-all duration-300;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-ink);
+  }
+  .input-field:focus {
+    @apply outline-none;
+    background: rgba(15, 23, 42, 0.9);
+    border-color: var(--color-brass);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+  }
+  .input-field::placeholder {
+    color: #64748b;
+  }
 }

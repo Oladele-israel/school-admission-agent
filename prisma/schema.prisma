@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMISSIONS_OFFICER
+  BURSAR
+  ADMIN
+}
+
+enum Stage {
+  INQUIRY
+  TOUR_BOOKED
+  TOUR_COMPLETED
+  APPLICATION_SUBMITTED
+  FEE_PENDING
+  ENROLLED
+  LOST
+}
+
+enum Intent {
+  FAQ
+  TOUR_REQUEST
+  STATUS_CHECK
+  FEE_NEGOTIATION
+  PAYMENT_CLAIM
+  COMPLAINT
+}
+
+enum EscalationStatus {
+  OPEN
+  RESOLVED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      Role
+  createdAt DateTime @default(now())
+}
+
+model Applicant {
+  id           String   @id @default(cuid())
+  sessionId    String?  @unique // web chat browser session identifier
+  parentName   String?
+  phone        String?  @unique
+  email        String?
+  childName    String?
+  stage        Stage    @default(INQUIRY)
+  agentPaused  Boolean  @default(false) // true while a human is handling this thread
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  conversations Conversation[]
+  tours         Tour[]
+  application   Application?
+  payments      Payment[]
+  escalations   EscalationTask[]
+}
+
+model Conversation {
+  id          String    @id @default(cuid())
+  applicantId String
+  applicant   Applicant @relation(fields: [applicantId], references: [id])
+  sender      String    // "parent" | "agent" | "officer:<userId>"
+  body        String
+  intent      Intent?
+  createdAt   DateTime  @default(now())
+
+  @@index([applicantId, createdAt])
+}
+
+model EscalationTask {
+  id             String           @id @default(cuid())
+  applicantId    String
+  applicant      Applicant        @relation(fields: [applicantId], references: [id])
+  reason         Intent
+  triggerSnippet String
+  assignedRole   Role
+  status         EscalationStatus @default(OPEN)
+  suggestedReply String?
+  resolution     String?
+  createdAt      DateTime         @default(now())
+  resolvedAt     DateTime?
+}
+
+model Tour {
+  id          String    @id @default(cuid())
+  applicantId String
+  applicant   Applicant @relation(fields: [applicantId], references: [id])
+  slot        DateTime
+  status      String    @default("booked") // booked | completed | cancelled
+}
+
+model Application {
+  id          String    @id @default(cuid())
+  applicantId String    @unique
+  applicant   Applicant @relation(fields: [applicantId], references: [id])
+  submittedAt DateTime?
+}
+
+model Payment {
+  id            String    @id @default(cuid())
+  applicantId   String
+  applicant     Applicant @relation(fields: [applicantId], references: [id])
+  amount        Decimal
+  dueDate       DateTime
+  status        String    // pending | paid | overdue
+  providerRef   String?
+  reminderStage Int       @default(0)
+  draftReminder String?   // agent-drafted stage-3+ message awaiting bursar approval
+  markedPaidBy  String?
+  note          String?
+  updatedAt     DateTime  @updatedAt
+}
+
+model KnowledgeBaseArticle {
+  id        String   @id @default(cuid())
+  category  String
+  question  String
+  answer    String
+  updatedBy String
+  updatedAt DateTime @updatedAt
+}
+
+model Settings {
+  id                String  @id @default("singleton")
+  reminderCadenceDays Json  // { incompleteApp: [2,5,10], feeReminder: [1,4,8] }
+  tourWindows       Json    // [{ day: "Mon", start: "09:00", end: "12:00" }, ...]
+  escalationRouting Json    // { FEE_NEGOTIATION: "BURSAR", COMPLAINT: "ADMISSIONS_OFFICER" }
+  chatTestMode      Boolean @default(true)
+}
