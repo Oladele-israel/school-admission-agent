@@ -8,7 +8,7 @@ export default async function EscalationsPage() {
   const user = await getSession();
 
   const escalations = await prisma.escalationTask.findMany({
-    where: { status: "OPEN" },
+    where: { status: "OPEN" as any },
     orderBy: { createdAt: "asc" },
     include: { applicant: true },
   });

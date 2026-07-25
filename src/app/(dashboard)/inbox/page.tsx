@@ -11,7 +11,7 @@ export default async function InboxPage() {
     orderBy: { updatedAt: "desc" },
     include: {
       conversations: { orderBy: { createdAt: "desc" }, take: 1 },
-      escalations: { where: { status: "OPEN" }, take: 1 },
+      escalations: { where: { status: "OPEN" as any }, take: 1 },
     },
     take: 100,
   });
