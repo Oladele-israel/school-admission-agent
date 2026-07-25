@@ -9,7 +9,7 @@ export default async function PaymentsPage() {
     include: { applicant: true },
   });
 
-  const items = payments.map((p) => ({
+  const items = payments.map((p: any) => ({
     id: p.id,
     parentName: p.applicant.parentName || "Unnamed parent",
     amount: p.amount.toString(),
