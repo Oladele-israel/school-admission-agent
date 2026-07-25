@@ -1,16 +1,42 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send, Bot } from "lucide-react";
 
 export default function ChatWidget() {
-  const [messages, setMessages] = useState([
-    { id: '1', sender: 'agent', text: 'Hi there! I am the Admissions Assistant. How can I help you today?' }
-  ]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
+
+  // Poll for new messages every 3 seconds
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await fetch('/api/chat/test-session-123/messages');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.messages && data.messages.length > 0) {
+            setMessages(
+              data.messages.map((m: any) => ({
+                id: m.id,
+                sender: m.sender,
+                text: m.body,
+              }))
+            );
+          }
+        }
+      } catch (e) {
+        console.error("Polling error", e);
+      }
+    };
+
+    fetchMessages(); // fetch immediately
+    const interval = setInterval(fetchMessages, 3000); // then every 3s
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSend = async () => {
     if (!input.trim()) return;
     const currentInput = input;
+    // Optimistically add to UI
     setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'parent', text: currentInput }]);
     setInput("");
     
@@ -24,9 +50,6 @@ export default function ChatWidget() {
           parentName: "New Parent" // We hardcode for testing
         })
       });
-      // Note: We don't push a simulated AI reply here anymore.
-      // The AI reply will come back via the /api/webhooks/agent-reply 
-      // when Make.com finishes processing!
     } catch (e) {
       console.error(e);
     }
