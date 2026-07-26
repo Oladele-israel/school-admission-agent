@@ -58,7 +58,7 @@ export default function EscalationsClient({ initialItems = [], currentRole }: an
                 id={`reply-${esc.id}`}
                 placeholder="Type your resolution or instructions for the AI..."
                 className="bg-black/50 border border-white/10 rounded-md p-2 text-xs text-white resize-none h-16 focus:outline-none focus:border-brass"
-                defaultValue={esc.suggestedReply || "Please ask the parent when they are available for a Google Meet (day and time), and ask for their email address."}
+                defaultValue={esc.suggestedReply || "Please ask the parent to schedule a Google Meet with me using my calendar link: https://calendar.app.google/your-link"}
               />
               <button 
                 onClick={async () => {
