@@ -29,11 +29,11 @@ export function notifyAgentOfMessage(payload: {
   return postJSON(process.env.MAKE_FLOW_A_WEBHOOK_URL, payload);
 }
 
-/** Fires Flow D — tells the agent a human has resolved an escalation. */
-export function notifyAgentOfResolution(payload: {
-  escalationId: string;
+/** Fires the Universal Action Scenario (Scenario 2) for both Escalations and Tours */
+export function triggerMakeAction(payload: {
+  taskType: "ESCALATION_REPLY" | "SCHEDULE_MEET" | "SCHEDULE_TOUR";
   applicantId: string;
-  resolution: string;
+  [key: string]: any;
 }) {
-  return postJSON(process.env.MAKE_FLOW_D_WEBHOOK_URL, payload);
+  return postJSON(process.env.MAKE_ACTION_WEBHOOK_URL, payload);
 }

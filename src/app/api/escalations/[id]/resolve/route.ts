@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import { notifyAgentOfResolution } from "@/lib/webhooks";
+import { triggerMakeAction } from "@/lib/webhooks";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getSession();
@@ -21,11 +21,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     data: { status: "RESOLVED", resolution: finalResolution, resolvedAt: new Date() },
   });
 
-  // Flow D: hand the human's decision back to the agent so it can compose the
-  // actual outbound message — the agent never invents new terms, only delivers
-  // exactly what was approved here.
+  // Unpause the agent so it can listen to the parent's replies again!
+  await prisma.applicant.update({
+    where: { id: escalation.applicantId },
+    data: { agentPaused: false }
+  });
+
+  // Flow 2 (Universal): Hand the human's decision back to the agent.
   if (action !== "reject") {
-    await notifyAgentOfResolution({
+    await triggerMakeAction({
+      taskType: "ESCALATION_REPLY",
       escalationId: id,
       applicantId: escalation.applicantId,
       resolution: finalResolution,

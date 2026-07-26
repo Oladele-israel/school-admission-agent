@@ -53,23 +53,31 @@ export default function EscalationsClient({ initialItems = [], currentRole }: an
                 </div>
               </div>
             </div>
-            
-            <button 
-              onClick={async () => {
-                await fetch(`/api/escalations/${esc.id}/resolve`, { 
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ 
-                    action: 'approve', 
-                    resolution: 'Approved by human staff from the dashboard.' 
-                  })
-                });
-                window.location.reload();
-              }}
-              className="btn-secondary whitespace-nowrap text-xs gap-2 shrink-0"
-            >
-              Resolve Ticket <ArrowRight size={14} />
-            </button>
+            <div className="flex flex-col gap-2 shrink-0 w-64">
+              <textarea 
+                id={`reply-${esc.id}`}
+                placeholder="Type your resolution or instructions for the AI..."
+                className="bg-black/50 border border-white/10 rounded-md p-2 text-xs text-white resize-none h-16 focus:outline-none focus:border-brass"
+                defaultValue={esc.suggestedReply || "Please ask the parent when they are available for a Google Meet (day and time), and ask for their email address."}
+              />
+              <button 
+                onClick={async () => {
+                  const resolutionText = (document.getElementById(`reply-${esc.id}`) as HTMLTextAreaElement).value;
+                  await fetch(`/api/escalations/${esc.id}/resolve`, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                      action: 'approve', 
+                      resolution: resolutionText 
+                    })
+                  });
+                  window.location.reload();
+                }}
+                className="btn-secondary whitespace-nowrap text-xs gap-2 justify-center"
+              >
+                Resolve Ticket <ArrowRight size={14} />
+              </button>
+            </div>
           </div>
         ))}
       </div>
