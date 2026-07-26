@@ -56,7 +56,14 @@ export default function EscalationsClient({ initialItems = [], currentRole }: an
             
             <button 
               onClick={async () => {
-                await fetch(`/api/escalations/${esc.id}/resolve`, { method: 'POST' });
+                await fetch(`/api/escalations/${esc.id}/resolve`, { 
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ 
+                    action: 'approve', 
+                    resolution: 'Approved by human staff from the dashboard.' 
+                  })
+                });
                 window.location.reload();
               }}
               className="btn-secondary whitespace-nowrap text-xs gap-2 shrink-0"
