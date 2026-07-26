@@ -40,13 +40,13 @@ export default function ChatWidget() {
     // Optimistically add to UI
     setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'parent', text: currentInput }]);
     setInput("");
-    
+
     try {
       await fetch('/api/chat/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          sessionId: sessionId, 
+        body: JSON.stringify({
+          sessionId: sessionId,
           message: currentInput,
           parentName: "Parent-" + sessionId.slice(-4) // Random name
         })
@@ -58,7 +58,7 @@ export default function ChatWidget() {
 
   return (
     <div className="ledger-card h-[500px] flex flex-col overflow-hidden bg-black/40 backdrop-blur-xl border border-white/10 shadow-2xl relative z-10">
-      
+
       {/* Header */}
       <div className="p-4 border-b border-white/10 bg-white/5 flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-brass flex items-center justify-center shadow-lg">
@@ -94,7 +94,7 @@ export default function ChatWidget() {
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             className="w-full bg-black/50 border border-white/10 rounded-full pl-4 pr-12 py-3 text-sm text-white focus:outline-none focus:border-brass transition-all"
           />
-          <button 
+          <button
             onClick={handleSend}
             className="absolute right-2 w-8 h-8 bg-brass hover:bg-violet-500 rounded-full flex items-center justify-center text-white transition-colors"
           >
