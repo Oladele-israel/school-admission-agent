@@ -74,13 +74,22 @@ export default function ChatWidget() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((m) => (
-          <div key={m.id} className={`flex ${m.sender === 'parent' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.sender === 'parent' ? 'bg-brass text-white rounded-br-sm' : 'bg-white/10 text-slate-200 rounded-bl-sm'}`}>
-              {m.text}
+        {messages.map((m) => {
+          // Parse URLs and make them clickable
+          const textWithLinks = m.text.replace(
+            /(https?:\/\/[^\s]+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>'
+          );
+
+          return (
+            <div key={m.id} className={`flex ${m.sender === 'parent' ? 'justify-end' : 'justify-start'}`}>
+              <div 
+                className={`max-w-[80%] p-3 rounded-2xl text-sm ${m.sender === 'parent' ? 'bg-brass text-white rounded-br-sm' : 'bg-white/10 text-slate-200 rounded-bl-sm'}`}
+                dangerouslySetInnerHTML={{ __html: textWithLinks }}
+              />
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Input */}
