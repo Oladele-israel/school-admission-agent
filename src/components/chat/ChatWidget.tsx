@@ -75,10 +75,14 @@ export default function ChatWidget() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((m) => {
-          // Parse URLs and make them clickable
+          // Find URLs and make them clickable, ensuring we DO NOT include trailing punctuation like '?' or '.'
           const textWithLinks = m.text.replace(
             /(https?:\/\/[^\s]+)/g,
-            '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">$1</a>'
+            (url: string) => {
+              const cleanUrl = url.replace(/[.,;!?]+$/, '');
+              const trailing = url.slice(cleanUrl.length);
+              return `<a href="${cleanUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">${cleanUrl}</a>${trailing}`;
+            }
           );
 
           return (
