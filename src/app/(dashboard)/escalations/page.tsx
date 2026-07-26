@@ -33,7 +33,11 @@ export default async function EscalationsPage() {
         </p>
       </header>
       <div className="flex-1 overflow-y-auto">
-        <EscalationsClient initialItems={items} currentRole={user!.role} />
+        <EscalationsClient 
+          initialItems={items} 
+          currentRole={user!.role} 
+          calendarLink={process.env.CALENDAR_LINK || ""}
+        />
       </div>
     </div>
   );

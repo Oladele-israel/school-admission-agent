@@ -1,7 +1,7 @@
 "use client";
 import { AlertCircle, CheckCircle2, Clock, ArrowRight } from "lucide-react";
 
-export default function EscalationsClient({ initialItems = [], currentRole }: any) {
+export default function EscalationsClient({ initialItems = [], currentRole, calendarLink = "" }: any) {
   const escalations = initialItems;
 
   const openCount = escalations.filter((e: any) => e.status !== "RESOLVED").length;
@@ -58,7 +58,7 @@ export default function EscalationsClient({ initialItems = [], currentRole }: an
                 id={`reply-${esc.id}`}
                 placeholder="Type your resolution or instructions for the AI..."
                 className="bg-black/50 border border-white/10 rounded-md p-2 text-xs text-white resize-none h-16 focus:outline-none focus:border-brass"
-                defaultValue={esc.suggestedReply || "Please ask the parent to schedule a Google Meet with me using my calendar link: https://calendar.app.google/your-link"}
+                defaultValue={esc.suggestedReply || `Please ask the parent to schedule a Google Meet with me using my calendar link: ${calendarLink || 'https://calendar.app.google/...'}`}
               />
               <button 
                 onClick={async () => {
