@@ -5,12 +5,13 @@ import { Send, Bot } from "lucide-react";
 export default function ChatWidget() {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
+  const [sessionId] = useState(() => "session-" + Math.random().toString(36).substring(2, 9));
 
   // Poll for new messages every 3 seconds
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await fetch('/api/chat/test-session-123/messages');
+        const res = await fetch(`/api/chat/${sessionId}/messages`);
         if (res.ok) {
           const data = await res.json();
           if (data.messages && data.messages.length > 0) {
@@ -31,7 +32,7 @@ export default function ChatWidget() {
     fetchMessages(); // fetch immediately
     const interval = setInterval(fetchMessages, 3000); // then every 3s
     return () => clearInterval(interval);
-  }, []);
+  }, [sessionId]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -45,9 +46,9 @@ export default function ChatWidget() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          sessionId: "test-session-123", 
+          sessionId: sessionId, 
           message: currentInput,
-          parentName: "New Parent" // We hardcode for testing
+          parentName: "Parent-" + sessionId.slice(-4) // Random name
         })
       });
     } catch (e) {
